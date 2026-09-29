@@ -95,14 +95,10 @@ Si trabajas dentro de un notebook de Jupyter, puedes instalar las bibliotecas en
 
 ## Paso 2: importar las bibliotecas
 
-En la primera celda de código, importa las herramientas que utilizarás:
+Instalación de la librería "requests" Esta librería permite realizar peticiones HTTP e interactuar de forma sencilla con sitios y servicios web.
 
 ```python
-import requests
-from bs4 import BeautifulSoup
-import csv
-import os
-from urllib.parse import urljoin
+!pip3 install requests
 ```
 
 ¿Qué hace cada importación?
