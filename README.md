@@ -39,61 +39,10 @@ Se utiliza para analizar información pública, hacer comparaciones o crear conj
 - **Beautiful Soup (`bs4`):** ayuda a analizar HTML y localizar elementos.
 - **`csv` o `pandas`:** permiten organizar y guardar los datos extraídos.
 
-## Flujo de un proyecto
 
-```text
-Enviar solicitud → Recibir HTML → Analizar la página
-→ Extraer datos → Limpiar y organizar → Guardar resultados
 
-# Web Scraping de libros con Python
 
-## Descripción del proyecto
-
-Este proyecto es un ejercicio introductorio de **web scraping** con Python. El programa visita la página de prueba [Books to Scrape](https://books.toscrape.com/), recibe su contenido HTML y extrae información de los libros que aparecen en la página principal.
-
-De cada libro se recopilan estos datos:
-
-- Nombre
-- Precio
-- URL de la imagen
-
-Al final, los resultados se guardan en un archivo CSV llamado `productos.csv`.
-
-> **Nota:** Books to Scrape es un sitio de práctica para aprender web scraping.
-
-## Herramientas utilizadas
-
-- **Python:** lenguaje con el que se escribe el programa.
-- **Requests:** biblioteca que envía solicitudes HTTP y recibe respuestas.
-- **Beautiful Soup:** biblioteca que analiza el HTML y permite localizar elementos.
-- **CSV:** formato de archivo para organizar datos en filas y columnas.
-- **Jupyter Notebook:** entorno interactivo donde se ejecuta el código paso a paso.
-
-## Requisitos previos
-
-Antes de comenzar, necesitas tener:
-
-- Python instalado.
-- Jupyter Notebook o VS Code con soporte para notebooks.
-- Conexión a internet para acceder al sitio web.
-
-## Paso 1: instalar las bibliotecas
-
-Abre una terminal y ejecuta:
-
-```bash
-python -m pip install requests beautifulsoup4
-```
-
-Si trabajas dentro de un notebook de Jupyter, puedes instalar las bibliotecas en una celda:
-
-```python
-%pip install requests beautifulsoup4
-```
-
-`requests` permite hacer solicitudes a sitios web. `beautifulsoup4` permite analizar el HTML recibido y buscar los elementos que contienen los datos.
-
-## Paso 2: importar las bibliotecas
+## Importar las bibliotecas
 
 Instalación de la librería "requests" Esta librería permite realizar peticiones HTTP e interactuar de forma sencilla con sitios y servicios web.
 
@@ -101,15 +50,149 @@ Instalación de la librería "requests" Esta librería permite realizar peticion
 !pip3 install requests
 ```
 
-¿Qué hace cada importación?
+Instalación de libreria "beautifulsoup4" esta libreria nos permite interactuar con cada uno de los elementos del sitio web estatico.
 
-- `requests`: solicita la página web.
-- `BeautifulSoup`: analiza el contenido HTML.
-- `csv`: escribe los datos en un archivo CSV.
-- `os`: crea la carpeta donde se guardarán los resultados.
-- `urljoin`: combina la dirección de la página con una ruta relativa para formar una URL completa.
+```python
+!pip3 install beautifulsoup4 
+```
 
-## Paso 3: guardar la dirección del sitio
+¿Cómo funciona una página web?
+Cuando entras a una página, tu computador le pide información a otro computador llamado servidor. El servidor responde enviando la página o los datos.
+Es como pedir algo en una tienda: tú haces el pedido y la tienda responde. El código de estado indica cómo salió la solicitud.
+- Code 200 — Todo salió bien: el servidor encontró lo que pediste y te lo envió.
+- Code 404 — No se encontró: el servidor no encontró la página o el recurso que buscabas.
+- Code 400 — La solicitud está mal escrita: el servidor no entiende lo que le pediste.
+- Code 422 — Hay un dato incorrecto: la solicitud se entiende, pero uno de los datos enviados no sirve.
+- Code 429 — Hiciste demasiadas solicitudes: espera un poco antes de volver a intentarlo.
+- Code 500 — Hubo un problema en el servidor: el problema está en la página o en el computador que la envía.
+- Code 496 — Problema con el certificado de seguridad: algunos servidores usan este código cuando hay un problema con la conexión segura.
+La comunicación entre tu computador y el servidor suele usar HTTP, un conjunto de reglas para pedir y enviar información por internet.
+
+```python
+import requests
+from bs4 import BeautifulSoup
+import csv
+```
+
+# Hacer peticiones HTTP
+### CONCEPTOS
+
+### HTTP:
+
+- 🌎 Hypertext Transfer Protocol.
+- Es el protocolo de comunicación que permite las transferencias de información a través de archivos en la World Wide Web.
+
+### GET:
+
+- 🔍 Recupera datos del servidor.
+- Se usa para leer o consultar información. No modifica nada.
+
+### POST:
+
+- ✉️ Envía datos al servidor.
+- Se usa para crear nuevos recursos (por ejemplo, enviar un formulario).
+
+### PUT:
+
+- 🛠️ Actualiza un recurso existente.
+- Reemplaza por completo el recurso con la nueva información enviada.
+
+### DELETE:
+
+- ❌ Elimina un recurso del servidor.
+- Se usa para borrar datos específicos.
+
+```python
+url = "http://books.toscrape.com/"
+```
+```python
+# Realizar la petición GET
+response = requests.get(url)
+```
+```python
+# Verificar el código de estado
+print(response)
+```
+```python
+<Response [200]>
+```
+```python
+# Trae la pagina en formato HTML
+print(response.text)
+```
+```python
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en-us" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en-us" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en-us" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en-us" class="no-js"> <!--<![endif]-->
+    <head>
+        <title>
+    All products | Books to Scrape - Sandbox
+</title>
+
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <meta name="created" content="24th Jun 2016 09:29" />
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="robots" content="NOARCHIVE,NOCACHE" />
+
+        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+        <!--[if lt IE 9]>
+        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+            <link rel="shortcut icon" href="static/oscar/favicon.ico" />
+...
+        
+    </body>
+</html>
+```
+```python
+if response.status_code == 200:
+    print("Conexión exitosa. Código de estado:", response.status_code)
+    # Imprimir los primeros 500 caracteres del HTML
+    print(response.text[0:500])
+else:
+    print("Error en la conexión. Código de estado:", response.status_code)
+
+```
+```python
+
+if response.status_code == 200:
+    print("Conexión exitosa. Código de estado:", response.status_code)
+    # Imprimir los primeros 500 caracteres del HTML
+    print(response.text[0:500])
+else:
+    print("Error en la conexión. Código de estado:", response.status_code)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##  guardar la dirección del sitio
 
 Define la página que quieres consultar:
 
