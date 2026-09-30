@@ -159,379 +159,269 @@ else:
 ```
 ```python
 
-if response.status_code == 200:
-    print("Conexión exitosa. Código de estado:", response.status_code)
-    # Imprimir los primeros 500 caracteres del HTML
-    print(response.text[0:500])
-else:
-    print("Error en la conexión. Código de estado:", response.status_code)
+Conexión exitosa. Código de estado: 200
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en-us" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en-us" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en-us" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en-us" class="no-js"> <!--<![endif]-->
+    <head>
+        <title>
+    All products | Books to Scrape - Sandbox
+</title>
 
 ```
 
+# Explorar la estructura HTML con BeautifulSoup
+### Conceptos
+🧱 ¿Qué es el DOM?
+DOM (Document Object Model) es una representación estructurada del contenido HTML de una página web, en forma de un árbol jerárquico de nodos.
 
+🧠 ¿Para qué sirve?
+El DOM permite que lenguajes de programación como JavaScript o Python (con BeautifulSoup, por ejemplo) puedan:
 
+- Acceder a elementos del HTML(< div >,< h1 >,< p >, etc.)
+- Leer o modificar contenido.
+- Navegar entre elementos (padres, hijos, hermanos).
+- Automatizar la extracción o manipulación de datos.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##  guardar la dirección del sitio
-
-Define la página que quieres consultar:
 
 ```python
-url = "https://books.toscrape.com/"
+
+#🌳 ¿Cómo luce el DOM?
+#Por ejemplo, este HTML:
+
+#<html>
+#  <body>
+#    <h1>// Curso de Scraping</h1> ------- TITULO, si hubiera un h2 fuera un subtitulo 
+#    <p>Aprende a extraer datos web</p> -----PARRAFO
+#  </body>
+#</html>
+#Se representa en el DOM como este árbol:
+
+#html
+#└── body
+#    ├── h1 → "Curso de Scraping"
+#    └── p → "Aprende a extraer datos web"
+#Cada etiqueta es un nodo, y puede contener texto u otros nodos.
 ```
 
-La variable `url` contiene la dirección principal del catálogo.
-
-## Paso 4: enviar una solicitud al sitio web
-
-Usa el método `GET` de Requests para pedir el contenido de la página:
+✨ ¿Por qué es importante en scraping?
+Porque para extraer información de una página web, necesitas saber dónde está ubicada en el DOM (por ejemplo, seleccionar todos los productos dentro de un < div class="producto">).
 
 ```python
+
+url = "http://books.toscrape.com/"
+```
+```python
+# Realizar la petición GET
 response = requests.get(url)
 ```
-
-La variable `response` contiene lo que devolvió el servidor. Puedes comprobar el código de estado:
-
-```python
-print(response.status_code)
-```
-
-Algunos códigos frecuentes:
-
-- `200`: la solicitud fue exitosa.
-- `404`: no se encontró la página o el recurso.
-- `429`: se enviaron demasiadas solicitudes en poco tiempo.
-- `500`: ocurrió un problema en el servidor.
-
-Comprueba que la página respondió correctamente antes de continuar:
-
-```python
-if response.status_code == 200:
-    print("Conexión exitosa")
-else:
-    print("Error en la conexión:", response.status_code)
-```
-
-## Paso 5: revisar el contenido HTML
-
-El contenido de la página se puede consultar con `response.text`:
-
-```python
-print(response.text[:500])
-```
-
-Este ejemplo muestra los primeros 500 caracteres para no imprimir toda la página en el notebook. El HTML contiene la estructura de la página: títulos, enlaces, imágenes y otros elementos.
-
-## Paso 6: analizar el HTML con Beautiful Soup
-
-Convierte el HTML recibido en un objeto que Beautiful Soup pueda recorrer:
-
 ```python
 soup = BeautifulSoup(response.text, "html.parser")
 ```
-
-El argumento `"html.parser"` indica que el contenido debe interpretarse como HTML.
-
-Ahora puedes inspeccionar la página. Por ejemplo, busca el título que aparece en la pestaña del navegador:
-
 ```python
-titulo_pagina = soup.find("title")
+print(soup)
+```
+```python
+<!DOCTYPE html>
 
-if titulo_pagina:
-    print(titulo_pagina.get_text(strip=True))
+<!--[if lt IE 7]>      <html lang="en-us" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en-us" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en-us" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-us"> <!--<![endif]-->
+<head>
+<title>
+    All products | Books to Scrape - Sandbox
+</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<meta content="24th Jun 2016 09:29" name="created"/>
+<meta content="" name="description"/>
+<meta content="width=device-width" name="viewport"/>
+<meta content="NOARCHIVE,NOCACHE" name="robots"/>
+<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+<!--[if lt IE 9]>
+        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+<link href="static/oscar/favicon.ico" rel="shortcut icon"/>
+<link href="static/oscar/css/styles.css" rel="stylesheet" type="text/css"/>
+<link href="static/oscar/js/bootstrap-datetimepicker/bootstrap-datetimepicker.css" rel="stylesheet"/>
+<link href="static/oscar/css/datetimepicker.css" rel="stylesheet" type="text/css"/>
+</head>
+<body class="default" id="default">
+...
+<!-- Version: N/A -->
+</body>
+</html>
+```
+```python
+# Extraer el head
+head = soup.find("title")
+print(head.get_text(strip=True))
+```
+```python
+
+All products | Books to Scrape - Sandbox
 ```
 
-`find()` busca el primer elemento que coincida con la etiqueta indicada. `get_text(strip=True)` obtiene su texto y quita espacios al principio y al final.
-
-También puedes buscar el encabezado principal del sitio:
-
 ```python
-encabezado = soup.find("div", class_="col-sm-8 h1")
 
-if encabezado:
-    print(encabezado.get_text(strip=True))
+# Extraer el título principal
+titulo = soup.find("div", class_="col-sm-8 h1")
+print(titulo.get_text(strip=True))
+```
+```python
+Books to ScrapeWe love being scraped!
 ```
 
-## Paso 7: localizar los libros
-
-En Books to Scrape, cada libro está dentro de un elemento `<article>` que tiene la clase `product_pod`.
-
-Usa un selector CSS para encontrar todos esos elementos:
+## Extracción de productos, imagenes, nombre y precios
 
 ```python
+url = "http://books.toscrape.com/"
+```
+```python
+# Realizar la petición GET
+response = requests.get(url)
+```
+```python
+soup = BeautifulSoup(response.text, "html.parser")
+```
+```python
+
+# Buscar todos los productos
 products = soup.select("article.product_pod")
-
-print(f"Libros encontrados: {len(products)}")
 ```
-
-El selector `article.product_pod` significa “busca los elementos `<article>` cuya clase sea `product_pod`”.
-
-La variable `products` contiene una lista con los libros encontrados en la página consultada.
-
-## Paso 8: extraer nombre, precio e imagen
-
-Crea una lista vacía. En ella guardarás los datos de cada libro:
-
 ```python
+
+print(products)
+```
+```python
+[<article class="product_pod">
+<div class="image_container">
+<a href="catalogue/a-light-in-the-attic_1000/index.html"><img alt="A Light in the Attic" class="thumbnail" src="media/cache/2c/da/2cdad67c44b002e7ead0cc35693c0e8b.jpg"/></a>
+</div>
+<p class="star-rating Three">
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+<i class="icon-star"></i>
+</p>
+<h3><a href="catalogue/a-light-in-the-attic_1000/index.html" title="A Light in the Attic">A Light in the ...</a></h3>
+<div class="product_price">
+<p class="price_color">Â£51.77</p>
+<p class="instock availability">
+<i class="icon-ok"></i>
+    
+        In stock
+    
+</p>
+<form>
+<button class="btn btn-primary btn-block" data-loading-text="Adding..." type="submit">Add to basket</button>
+</form>
+</div>
+</article>, <article class="product_pod">
+...
+<button class="btn btn-primary btn-block" data-loading-text="Adding..." type="submit">Add to basket</button>
+</form>
+</div>
+</article>]
+```
+```python
+# Lista para almacenar la información
 product_list = []
-```
 
-Después, recorre cada elemento de `products` y extrae la información:
-
-```python
 for product in products:
-    # Obtener el nombre completo desde el atributo title
+    # Nombre del libro
     nombre = product.find("h3").find("a")["title"]
-
-    # Obtener el precio y eliminar espacios sobrantes
-    precio = product.find(
-        "p",
-        class_="price_color"
-    ).get_text(strip=True)
-
-    # Obtener la ruta de la imagen
-    imagen_relativa = product.find(
-        "div",
-        class_="image_container"
-    ).find("img")["src"]
-
-    # Convertir la ruta relativa en una URL completa
-    imagen_url = urljoin(url, imagen_relativa)
-
-    # Guardar los tres datos en la lista
-    product_list.append({
-        "nombre": nombre,
-        "precio": precio,
-        "imagen_url": imagen_url
-    })
+    print(nombre)
 ```
-
-### ¿Cómo se obtiene cada dato?
-
-- `product.find("h3").find("a")["title"]` localiza el enlace del título y obtiene el nombre completo del libro.
-- `product.find("p", class_="price_color")` localiza el párrafo que contiene el precio.
-- `.get_text(strip=True)` devuelve el texto sin espacios sobrantes.
-- `product.find("div", class_="image_container").find("img")["src"]` encuentra la imagen y obtiene su dirección desde el atributo `src`.
-- `urljoin(url, imagen_relativa)` combina la URL principal con la ruta de la imagen.
-- `product_list.append(...)` añade la información del libro a la lista.
-
-Puedes comprobar cuántos libros se guardaron en la lista:
-
 ```python
-print(f"Productos extraídos: {len(product_list)}")
+A Light in the Attic
+Tipping the Velvet
+Soumission
+Sharp Objects
+Sapiens: A Brief History of Humankind
+The Requiem Red
+The Dirty Little Secrets of Getting Your Dream Job
+The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull
+The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics
+The Black Maria
+Starving Hearts (Triangular Trade Trilogy, #1)
+Shakespeare's Sonnets
+Set Me Free
+Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)
+Rip it Up and Start Again
+Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991
+Olio
+Mesaerion: The Best Science Fiction Stories 1800-1849
+Libertarianism for Beginners
+It's Only the Himalayas
 ```
-
-También puedes ver algunos resultados:
-
 ```python
-for libro in product_list[:5]:
-    print(libro)
+# Lista para almacenar la información
+product_list = []
+
+for product in products:
+    # Nombre del libro
+    nombre = product.find("h3").find("a")["title"]
+    print(nombre)
+    
+    # Precio
+    precio = product.find("p", class_="price_color").get_text()
+    print(precio)
+    
+    # Imagen
+    imagen = product.find("div", class_="image_container").find("img")["src"]
+    imagen_url = "http://books.toscrape.com/" + imagen
+    print(imagen_url)
 ```
-
-`product_list[:5]` muestra solo los primeros cinco libros.
-
-## Paso 9: crear la carpeta de resultados
-
-Antes de escribir el CSV, crea la carpeta `resultados`:
-
 ```python
-os.makedirs("resultados", exist_ok=True)
+A Light in the Attic
+Â£51.77
+http://books.toscrape.com/media/cache/2c/da/2cdad67c44b002e7ead0cc35693c0e8b.jpg
+Tipping the Velvet
+Â£53.74
+http://books.toscrape.com/media/cache/26/0c/260c6ae16bce31c8f8c95daddd9f4a1c.jpg
+Soumission
+Â£50.10
+http://books.toscrape.com/media/cache/3e/ef/3eef99c9d9adef34639f510662022830.jpg
+Sharp Objects
+Â£47.82
+http://books.toscrape.com/media/cache/32/51/3251cf3a3412f53f339e42cac2134093.jpg
+Sapiens: A Brief History of Humankind
+Â£54.23
+http://books.toscrape.com/media/cache/be/a5/bea5697f2534a2f86a3ef27b5a8c12a6.jpg
+The Requiem Red
+Â£22.65
+http://books.toscrape.com/media/cache/68/33/68339b4c9bc034267e1da611ab3b34f8.jpg
+The Dirty Little Secrets of Getting Your Dream Job
+Â£33.34
+http://books.toscrape.com/media/cache/92/27/92274a95b7c251fea59a2b8a78275ab4.jpg
+The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull
+Â£17.93
+http://books.toscrape.com/media/cache/3d/54/3d54940e57e662c4dd1f3ff00c78cc64.jpg
+The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics
+...
+http://books.toscrape.com/media/cache/0b/bc/0bbcd0a6f4bcd81ccb1049a52736406e.jpg
+It's Only the Himalayas
+Â£45.17
+http://books.toscrape.com/media/cache/27/a5/27a53d0bb95bdd88288eaf66c9230d7e.jpg
 ```
-
-`exist_ok=True` evita un error si la carpeta ya existe.
-
-## Paso 10: guardar los datos en un CSV
-
-Define la ruta del archivo y escribe los datos:
-
 ```python
+import os
+import csv
+
 path_csv = "resultados/productos.csv"
+os.makedirs("resultados", exist_ok=True)
 
-with open(path_csv, "w", newline="", encoding="utf-8") as archivo:
-    columnas = ["nombre", "precio", "imagen_url"]
-
+with open(path_csv, "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(
-        archivo,
-        fieldnames=columnas
+        f,
+        fieldnames=["nombre", "precio", "imagen_url"]
     )
-
     writer.writeheader()
     writer.writerows(product_list)
 
-print(
-    f"Extracción completa: {len(product_list)} productos "
-    f"guardados en {path_csv}"
-)
+print(f"Extracción completa: {len(product_list)} productos guardados en {path_csv}")
 ```
-
-¿Qué hace esta parte?
-
-- `open(..., "w")` crea el archivo o reemplaza su contenido si ya existe.
-- `newline=""` ayuda a evitar líneas vacías adicionales en algunos programas.
-- `encoding="utf-8"` permite guardar correctamente caracteres especiales.
-- `csv.DictWriter(...)` escribe diccionarios en formato CSV.
-- `fieldnames=columnas` define los nombres y el orden de las columnas.
-- `writeheader()` escribe la primera fila con los encabezados.
-- `writerows(product_list)` escribe una fila por cada libro.
-
-El archivo generado queda en:
-
-```text
-resultados/productos.csv
-```
-
-## Código completo
-
-Este es el código completo del proceso, desde la solicitud hasta la creación del CSV:
-
-```python
-import requests
-from bs4 import BeautifulSoup
-import csv
-import os
-from urllib.parse import urljoin
-
-# Dirección de la página que se va a consultar
-url = "https://books.toscrape.com/"
-
-# Enviar una solicitud GET
-response = requests.get(url)
-
-# Comprobar que la solicitud fue exitosa
-if response.status_code == 200:
-    print("Conexión exitosa")
-
-    # Analizar el HTML recibido
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    # Buscar todos los libros de la página
-    products = soup.select("article.product_pod")
-
-    # Lista para almacenar los datos extraídos
-    product_list = []
-
-    # Recorrer los libros y extraer sus datos
-    for product in products:
-        nombre = product.find("h3").find("a")["title"]
-
-        precio = product.find(
-            "p",
-            class_="price_color"
-        ).get_text(strip=True)
-
-        imagen_relativa = product.find(
-            "div",
-            class_="image_container"
-        ).find("img")["src"]
-
-        imagen_url = urljoin(url, imagen_relativa)
-
-        product_list.append({
-            "nombre": nombre,
-            "precio": precio,
-            "imagen_url": imagen_url
-        })
-
-    # Crear la carpeta de resultados si todavía no existe
-    os.makedirs("resultados", exist_ok=True)
-
-    # Guardar la información en un archivo CSV
-    path_csv = "resultados/productos.csv"
-
-    with open(path_csv, "w", newline="", encoding="utf-8") as archivo:
-        columnas = ["nombre", "precio", "imagen_url"]
-
-        writer = csv.DictWriter(
-            archivo,
-            fieldnames=columnas
-        )
-
-        writer.writeheader()
-        writer.writerows(product_list)
-
-    print(
-        f"Extracción completa: {len(product_list)} productos "
-        f"guardados en {path_csv}"
-    )
-
-else:
-    print("Error en la conexión:", response.status_code)
-```
-
-## Estructura sugerida del proyecto
-
-Organiza los archivos del proyecto de esta manera:
-
-```text
-web-scraping-libros/
-├── Curso Webscraping.ipynb
-├── resultados/
-│   └── productos.csv
-├── requirements.txt
-└── README.md
-```
-
-El archivo `requirements.txt` puede contener:
-
-```text
-requests
-beautifulsoup4
-```
-
-Así, otra persona puede instalar las bibliotecas necesarias con:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-## Cómo ejecutar el proyecto
-
-1. Descarga o clona el repositorio.
-2. Abre la carpeta del proyecto en VS Code o Jupyter.
-3. Instala las bibliotecas desde la terminal o con `requirements.txt`.
-4. Abre `Curso Webscraping.ipynb`.
-5. Ejecuta las celdas en orden, desde la primera hasta la última.
-6. Cuando termine el proceso, busca el archivo `resultados/productos.csv`.
-
-## Alcance del ejemplo
-
-Este ejercicio extrae los libros que aparecen en la página principal del sitio. No recorre las demás páginas del catálogo.
-
-## Buenas prácticas
-
-- Revisa las condiciones de uso del sitio antes de recopilar información.
-- Haz solicitudes con moderación y evita enviar muchas peticiones seguidas.
-- Comprueba el código de estado antes de analizar la respuesta.
-- Los selectores dependen de la estructura HTML; si el sitio cambia, puede ser necesario actualizarlos.
-- No subas contraseñas, claves privadas ni información personal a GitHub.
-- Usa este ejemplo con fines educativos y respeta las reglas del sitio.
-
-## Resultado
-
-Al finalizar, el proyecto genera un archivo CSV con una fila por cada libro encontrado y tres columnas:
-
-| Columna | Contenido |
-|---|---|
-| `nombre` | Nombre del libro |
-| `precio` | Precio mostrado en la página |
-| `imagen_url` | Dirección completa de la imagen |
